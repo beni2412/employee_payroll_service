@@ -1,11 +1,11 @@
 package employee_payroll;
 
-public class EmployeePayroll {
+public class EmployeePayrollData {
 	private int id;
 	private String name;
-	private long salary;
+	private double salary;
 
-	public EmployeePayroll(int id, String name, long salary) {
+	public EmployeePayrollData(int id, String name, double salary) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -28,12 +28,17 @@ public class EmployeePayroll {
 		this.name = name;
 	}
 
-	public long getSalary() {
+	public double getSalary() {
 		return salary;
 	}
 
-	public void setSalary(long salary) {
+	public void setSalary(double salary) {
 		this.salary = salary;
+	}
+	
+	@Override
+	public String toString() {
+		return "Emp name: "+name+" ,Emp ID: "+id+" ,Emp salary: "+salary; 
 	}
 
 }
