@@ -1,0 +1,3 @@
+Emp name: Warren Buffet ,Emp ID: 200456 ,Emp salary: 500000.0
+Emp name: Amanico Ortega ,Emp ID: 200457 ,Emp salary: 200000.0
+Emp name: Larry Ellison ,Emp ID: 200551 ,Emp salary: 800000.0
