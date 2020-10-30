@@ -46,8 +46,6 @@ public class EmployeePayrollServiceTest {
 		employeePayrollService.writeData(IOService.FILE_IO);
 		long entries = employeePayrollService.countEntries(IOService.FILE_IO);
 		employeePayrollService.printData(IOService.FILE_IO);
-		List<EmployeePayrollData> employeeList = employeePayrollService.readData(IOService.FILE_IO);
-		System.out.println(employeeList);
 		assertEquals(3, entries);
 	}
 }
