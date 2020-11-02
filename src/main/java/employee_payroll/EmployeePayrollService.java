@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.cg.empdatabase.EmployeePayrollDBService;
+import com.cg.empdatabase.EmployeePayrollException;
+
 public class EmployeePayrollService {
 	public enum IOService {
 		CONSOLE_IO, FILE_IO, DB_IO, REST_IO;
@@ -13,6 +16,10 @@ public class EmployeePayrollService {
 
 	public EmployeePayrollService(List<EmployeePayrollData> employeePayrollList) {
 		this.employeePayrollList = employeePayrollList;
+	}
+
+	public EmployeePayrollService() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public static void main(String[] args) {
@@ -61,6 +68,12 @@ public class EmployeePayrollService {
 				return new EmployeePayrollFileIOOperations().readEmployeePayrollData();
 			else
 				return null;
+		}
+		
+		public List<EmployeePayrollData> readEmpPayrollData(IOService ioService) throws EmployeePayrollException {
+			if (ioService.equals(IOService.DB_IO))
+				employeePayrollList = new EmployeePayrollDBService().readData();
+			return employeePayrollList;
 		}
 
 }
