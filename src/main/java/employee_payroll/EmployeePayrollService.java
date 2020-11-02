@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+
+
 import com.cg.empdatabase.EmployeePayrollDBService;
 import com.cg.empdatabase.EmployeePayrollException;
 
@@ -13,13 +15,14 @@ public class EmployeePayrollService {
 	}
 
 	private List<EmployeePayrollData> employeePayrollList;
+	private EmployeePayrollDBService employeePayrollDBService;
+	
+	public EmployeePayrollService() {
+		employeePayrollDBService = EmployeePayrollDBService.getInstance();
+	}
 
 	public EmployeePayrollService(List<EmployeePayrollData> employeePayrollList) {
 		this.employeePayrollList = employeePayrollList;
-	}
-
-	public EmployeePayrollService() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public static void main(String[] args) {
@@ -41,39 +44,63 @@ public class EmployeePayrollService {
 		System.out.println("Enter Employee salary: ");
 		double salary = consoleInputReader.nextDouble();
 		employeePayrollList.add(new EmployeePayrollData(id, name, salary));
-		
-	}
-	
-	
-		public void writeData(IOService ioService) {
-			if (ioService.equals(IOService.CONSOLE_IO))
-				System.out.println("Writing Employee Payroll Data to Console\n" + employeePayrollList);
-			else if (ioService.equals(IOService.FILE_IO))
-				new EmployeePayrollFileIOOperations().writeEmployeePayrollData(employeePayrollList);
-		}
 
-		
-		public long countEntries(IOService ioService) {
-			if (ioService.equals(IOService.FILE_IO))
-				return new EmployeePayrollFileIOOperations().countNoOfEntries();
-			return 0;
-		}
-		
-		public void printData(IOService ioService) {
-			new EmployeePayrollFileIOOperations().printEmployeePayrollData();
-		}
-		
-		public List<EmployeePayrollData> readData(IOService ioService) {
-			if (ioService.equals(IOService.FILE_IO))
-				return new EmployeePayrollFileIOOperations().readEmployeePayrollData();
-			else
-				return null;
-		}
-		
-		public List<EmployeePayrollData> readEmpPayrollData(IOService ioService) throws EmployeePayrollException {
-			if (ioService.equals(IOService.DB_IO))
-				employeePayrollList = new EmployeePayrollDBService().readData();
-			return employeePayrollList;
-		}
+	}
+
+	public void writeData(IOService ioService) {
+		if (ioService.equals(IOService.CONSOLE_IO))
+			System.out.println("Writing Employee Payroll Data to Console\n" + employeePayrollList);
+		else if (ioService.equals(IOService.FILE_IO))
+			new EmployeePayrollFileIOOperations().writeEmployeePayrollData(employeePayrollList);
+	}
+
+	public long countEntries(IOService ioService) {
+		if (ioService.equals(IOService.FILE_IO))
+			return new EmployeePayrollFileIOOperations().countNoOfEntries();
+		return 0;
+	}
+
+	public void printData(IOService ioService) {
+		new EmployeePayrollFileIOOperations().printEmployeePayrollData();
+	}
+
+	public List<EmployeePayrollData> readData(IOService ioService) {
+		if (ioService.equals(IOService.FILE_IO))
+			return new EmployeePayrollFileIOOperations().readEmployeePayrollData();
+		else
+			return null;
+	}
+
+	public List<EmployeePayrollData> readEmpPayrollData(IOService ioService) throws EmployeePayrollException {
+		if (ioService.equals(IOService.DB_IO))
+			employeePayrollList = employeePayrollDBService.readData();
+		return employeePayrollList;
+	}
+
+	
+public boolean checkEmployeePayrollInSyncWithDB(String name) {
+		List<EmployeePayrollData> employeePayrollDataList = employeePayrollDBService.getEmployeePayrollData(name);
+		return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
+	}
+
+	public void updateEmployeeSalary(String name, double salary) {
+		int result = employeePayrollDBService.updateEmployeeData(name, salary);
+		if (result == 0)
+			return;
+		EmployeePayrollData employeePayrollData = this.getEmployeePayrollData(name);
+		if (employeePayrollData != null)
+			employeePayrollData.salary = salary;
+	}
+
+	private EmployeePayrollData getEmployeePayrollData(String name) {
+		EmployeePayrollData employeePayrollDataItem;
+		employeePayrollDataItem = this.employeePayrollList.stream()
+				.filter(employeePayrollData -> employeePayrollData.getName().equals(name))
+				.findFirst()
+				.orElse(null);
+		return employeePayrollDataItem;
+	}
+
+	
 
 }
