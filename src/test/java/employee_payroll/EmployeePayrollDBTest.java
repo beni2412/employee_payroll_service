@@ -1,5 +1,6 @@
 package employee_payroll;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.Assert;
@@ -23,5 +24,14 @@ public class EmployeePayrollDBTest {
 		 empPayRollService.updateEmployeeSalary("Terisa",3000000.0);
 		 boolean result = empPayRollService.checkEmployeePayrollInSyncWithDB("Terisa");
 		 Assert.assertTrue(result);
+	}
+	
+	@Test
+	public void givenDateRangeWhenRetrieved_ShouldReturnEmpCount() throws EmployeePayrollException {
+		EmployeePayrollService empPayRollService = new EmployeePayrollService();
+		LocalDate startDate = LocalDate.of(2018, 01, 01);
+		LocalDate endDate = LocalDate.now();
+		List<EmployeePayrollData> empPayrollList = empPayRollService.getEmployeePayrollDataForDateRange(startDate, endDate);
+		Assert.assertEquals(3, empPayrollList.size());
 	}
 }

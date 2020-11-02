@@ -1,5 +1,6 @@
 package employee_payroll;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -101,6 +102,8 @@ public boolean checkEmployeePayrollInSyncWithDB(String name) {
 		return employeePayrollDataItem;
 	}
 
-	
+	public List<EmployeePayrollData> getEmployeePayrollDataForDateRange(LocalDate startDate, LocalDate endDate){
+		return employeePayrollDBService.getEmployeePayrollDataForDateRange(startDate,endDate);
+	}
 
 }
