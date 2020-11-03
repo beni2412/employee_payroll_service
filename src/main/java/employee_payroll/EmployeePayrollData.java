@@ -7,6 +7,7 @@ public class EmployeePayrollData {
 	private String name;
 	public double salary;
 	private LocalDate startDate;
+	private String gender;
 
 	public EmployeePayrollData(int id, String name, double salary) {
 		super();
@@ -21,6 +22,11 @@ public class EmployeePayrollData {
 		this.name = name;
 		this.salary = salary;
 		this.startDate = startDate;
+	}
+	
+	public EmployeePayrollData(int id, String name, double salary, LocalDate startDate, String gender) {
+		this(id,name,salary,startDate);
+		this.gender = gender;
 	}
 
 	public int getId() {
@@ -53,6 +59,15 @@ public class EmployeePayrollData {
 
 	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
+	}
+	
+	public String getGender() {
+		return gender;
+	}
+
+
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 
 	@Override

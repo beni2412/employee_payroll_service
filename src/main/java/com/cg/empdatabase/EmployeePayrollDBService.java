@@ -10,7 +10,10 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import employee_payroll.EmployeePayrollData;
 
@@ -87,7 +90,8 @@ public class EmployeePayrollDBService {
 				String name = result.getString("name");
 				double salary = result.getDouble("salary");
 				LocalDate startDate = result.getDate("start").toLocalDate();
-				employeePayrollList.add(new EmployeePayrollData(id, name, salary, startDate));
+				String gender = result.getString("gender");
+				employeePayrollList.add(new EmployeePayrollData(id, name, salary, startDate,gender));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -133,6 +137,34 @@ public class EmployeePayrollDBService {
 			e.printStackTrace();
 		}
 		return employeePayrollList;
+	}
+
+	public double getSumByGender(String gender) throws EmployeePayrollException {
+		List<EmployeePayrollData> employeePayrollList = this.readData();
+		double sum = 0.0;
+		List<EmployeePayrollData> sortByGenderList = employeePayrollList.stream()
+				.filter(employee -> employee.getGender().equals(gender)).collect(Collectors.toList());
+		sum = sortByGenderList.stream().map(employee -> employee.getSalary()).reduce(0.0, Double::sum);
+		return sum;
+	}
+
+	public double getEmpDataGroupedByGender(String column, String operation, String gender) {
+
+		Map<String, Double> sumByGenderMap = new HashMap<>();
+		String sql = String.format("SELECT gender, %s(%s) FROM employee_data GROUP BY gender;", operation, column);
+		try (Connection connection = getConnection()) {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				sumByGenderMap.put(resultSet.getString(1), resultSet.getDouble(2));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		if (gender.equals("M")) {
+			return sumByGenderMap.get("M");
+		}
+		return sumByGenderMap.get("F");
 	}
 
 }

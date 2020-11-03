@@ -34,4 +34,21 @@ public class EmployeePayrollDBTest {
 		List<EmployeePayrollData> empPayrollList = empPayRollService.getEmployeePayrollDataForDateRange(startDate, endDate);
 		Assert.assertEquals(3, empPayrollList.size());
 	}
+	
+	@Test
+	public void givenDBFindSumOfSalaryOfMale_shouldReturnSum() throws EmployeePayrollException {
+		EmployeePayrollService empPayRollService = new EmployeePayrollService();
+		double sum = empPayRollService.getSumByGender(IOService.DB_IO,"M");
+		double sum1 = empPayRollService.getEmpDataGroupedByGender(IOService.DB_IO, "salary", "SUM","M");
+		Assert.assertTrue(sum == sum1);
+	}
+
+	@Test
+	public void givenDBFindSumOfSalaryOfFemale_shouldReturnSum() throws EmployeePayrollException {
+		EmployeePayrollService empPayRollService = new EmployeePayrollService();
+		double sum = empPayRollService.getSumByGender(IOService.DB_IO,"F");
+		double sum1 = empPayRollService.getEmpDataGroupedByGender(IOService.DB_IO, "salary", "SUM","F");
+	
+		Assert.assertTrue(sum == sum1);
+	}
 }
