@@ -51,4 +51,13 @@ public class EmployeePayrollDBTest {
 	
 		Assert.assertTrue(sum == sum1);
 	}
+	
+	@Test
+	public void givenNewEmployee_WhenAdded_shouldSyncWithDatabase() throws EmployeePayrollException {
+		EmployeePayrollService empPayRollService = new EmployeePayrollService();
+		List<EmployeePayrollData> empPayrollList = empPayRollService.readEmpPayrollData(IOService.DB_IO);
+		empPayRollService.addEmployeeToPayroll("Mark",5000000.00,LocalDate.now(),"M");
+		boolean result = empPayRollService.checkEmployeePayrollInSyncWithDB("Mark");
+		Assert.assertTrue(result);
+	}
 }
