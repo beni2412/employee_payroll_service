@@ -1,7 +1,10 @@
 package employee_payroll;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -72,5 +75,23 @@ public class EmployeePayrollDBTest {
 		empPayRollService.remove("Mark");
 		List<EmployeePayrollData> empPayrollList = empPayRollService.readEmpPayrollData(IOService.DB_IO);
 		Assert.assertEquals(3, empPayrollList.size());
+	}
+	
+	@Test
+	public void givenMultipleEmployee_WhenAdded_ShouldMatchEntries() throws EmployeePayrollException {
+	   List<String> deptList = new ArrayList<>();
+	   deptList.add("Sales");
+		EmployeePayrollData[] arrOfEmps = {
+				new EmployeePayrollData(0, "Jeff Bezoz", 1000000.0, LocalDate.now(), "M", deptList),
+				new EmployeePayrollData(0, "Bill Gates", 4000000.0, LocalDate.now(), "M", deptList),
+				new EmployeePayrollData(0, "Mukesh", 1000000.0, LocalDate.now(), "M", deptList)
+		};
+		EmployeePayrollService empPayRollService = new EmployeePayrollService();
+		empPayRollService.readEmpPayrollData(IOService.DB_IO);
+		Instant start = Instant.now();
+		empPayRollService.addEmployeeToPayroll(Arrays.asList(arrOfEmps));
+		Instant end = Instant.now();
+		System.out.println("Duration without Thread : "+ Duration.between(start, end));
+		Assert.assertEquals(4, empPayRollService.countEntries(IOService.DB_IO));
 	}
 }

@@ -202,7 +202,7 @@ public class EmployeePayrollDBService {
 
 		try (Statement statement = connection.createStatement()) {
 			String sql = String.format(
-					"INSERT INTO employee_data(name, salary, start, gender) VALUES('%s', '%s', '%s', '%s');", name,
+					"INSERT INTO employee_data(name, salary, start, gender, status) VALUES('%s', '%s', '%s', '%s','active');", name,
 					salary, Date.valueOf(start), gender);
 			int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
 			if (rowAffected == 1) {

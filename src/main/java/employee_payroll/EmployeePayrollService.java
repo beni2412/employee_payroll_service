@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-
-
 import com.cg.empdatabase.EmployeePayrollDBService;
 import com.cg.empdatabase.EmployeePayrollException;
 
@@ -17,7 +15,7 @@ public class EmployeePayrollService {
 
 	private List<EmployeePayrollData> employeePayrollList;
 	private EmployeePayrollDBService employeePayrollDBService;
-	
+
 	public EmployeePayrollService() {
 		employeePayrollDBService = EmployeePayrollDBService.getInstance();
 	}
@@ -58,7 +56,7 @@ public class EmployeePayrollService {
 	public long countEntries(IOService ioService) {
 		if (ioService.equals(IOService.FILE_IO))
 			return new EmployeePayrollFileIOOperations().countNoOfEntries();
-		return 0;
+		return employeePayrollList.size();
 	}
 
 	public void printData(IOService ioService) {
@@ -78,8 +76,7 @@ public class EmployeePayrollService {
 		return employeePayrollList;
 	}
 
-	
-public boolean checkEmployeePayrollInSyncWithDB(String name) {
+	public boolean checkEmployeePayrollInSyncWithDB(String name) {
 		List<EmployeePayrollData> employeePayrollDataList = employeePayrollDBService.getEmployeePayrollData(name);
 		return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
 	}
@@ -96,14 +93,12 @@ public boolean checkEmployeePayrollInSyncWithDB(String name) {
 	private EmployeePayrollData getEmployeePayrollData(String name) {
 		EmployeePayrollData employeePayrollDataItem;
 		employeePayrollDataItem = this.employeePayrollList.stream()
-				.filter(employeePayrollData -> employeePayrollData.getName().equals(name))
-				.findFirst()
-				.orElse(null);
+				.filter(employeePayrollData -> employeePayrollData.getName().equals(name)).findFirst().orElse(null);
 		return employeePayrollDataItem;
 	}
 
-	public List<EmployeePayrollData> getEmployeePayrollDataForDateRange(LocalDate startDate, LocalDate endDate){
-		return employeePayrollDBService.getEmployeePayrollDataForDateRange(startDate,endDate);
+	public List<EmployeePayrollData> getEmployeePayrollDataForDateRange(LocalDate startDate, LocalDate endDate) {
+		return employeePayrollDBService.getEmployeePayrollDataForDateRange(startDate, endDate);
 	}
 
 	public double getSumByGender(IOService ioService, String gender) throws EmployeePayrollException {
@@ -119,11 +114,20 @@ public boolean checkEmployeePayrollInSyncWithDB(String name) {
 		return 0.0;
 	}
 
-	public void addEmployeeToPayroll(String name, double salary, LocalDate start, String gender, List<String> deptList) {
+	public void addEmployeeToPayroll(String name, double salary, LocalDate start, String gender,
+			List<String> deptList) {
 		employeePayrollList.add(employeePayrollDBService.addEmpToPayroll(name, salary, start, gender, deptList));
-		
+
 	}
-	
+
+	public void addEmployeeToPayroll(List<EmployeePayrollData> empPayrollList) {
+		empPayrollList.forEach(empPayrollData -> {
+		this.addEmployeeToPayroll(empPayrollData.getName(), empPayrollData.getSalary(),
+					empPayrollData.getStartDate(), empPayrollData.getGender(), empPayrollData.getDeptList());
+		});
+		//System.out.println(this.employeePayrollList);
+	}
+
 	public void remove(String name) throws EmployeePayrollException {
 		employeePayrollDBService.remove(name);
 	}
