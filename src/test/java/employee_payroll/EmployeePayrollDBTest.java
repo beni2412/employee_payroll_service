@@ -57,6 +57,7 @@ public class EmployeePayrollDBTest {
 	public void givenNewEmployee_WhenAdded_shouldSyncWithDatabase() throws EmployeePayrollException {
 		List<String> deptList = new ArrayList<>();
 		deptList.add("Sales");
+		deptList.add("HR");
 		EmployeePayrollService empPayRollService = new EmployeePayrollService();
 		List<EmployeePayrollData> empPayrollList = empPayRollService.readEmpPayrollData(IOService.DB_IO);
 		empPayRollService.addEmployeeToPayroll("Mark",5000000.00,LocalDate.now(),"M", deptList);
