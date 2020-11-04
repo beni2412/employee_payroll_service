@@ -123,5 +123,9 @@ public boolean checkEmployeePayrollInSyncWithDB(String name) {
 		employeePayrollList.add(employeePayrollDBService.addEmpToPayroll(name, salary, start, gender, deptList));
 		
 	}
+	
+	public void remove(String name) throws EmployeePayrollException {
+		employeePayrollDBService.remove(name);
+	}
 
 }

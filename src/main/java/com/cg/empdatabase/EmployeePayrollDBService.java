@@ -54,7 +54,7 @@ public class EmployeePayrollDBService {
 	 */
 
 	public List<EmployeePayrollData> readData() throws EmployeePayrollException {
-		String sql = "SELECT * FROM employee_data;";
+		String sql = "SELECT * FROM employee_data WHERE status = 'active';";
 		List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
 		try (Connection connection = this.getConnection()) {
 			Statement statement = connection.createStatement();
@@ -102,7 +102,7 @@ public class EmployeePayrollDBService {
 	private void prepareStatementForEmployeeData() {
 		try {
 			Connection connection = this.getConnection();
-			String sql = "SELECT * FROM employee_data WHERE name = ?";
+			String sql = "SELECT * FROM employee_data WHERE name = ? AND status = 'active'";
 			employeePayrollDataStatement = connection.prepareStatement(sql);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -114,7 +114,7 @@ public class EmployeePayrollDBService {
 	}
 
 	private int updateEmployeeDataUsingStatement(String name, double salary) {
-		String sql = String.format("update employee_data set salary = %.2f where name = '%s';", salary, name);
+		String sql = String.format("update employee_data set salary = %.2f where name = '%s' AND status = 'active';", salary, name);
 		try (Connection connection = this.getConnection()) {
 			Statement statement = connection.createStatement();
 			return statement.executeUpdate(sql);
@@ -125,7 +125,7 @@ public class EmployeePayrollDBService {
 	}
 
 	public List<EmployeePayrollData> getEmployeePayrollDataForDateRange(LocalDate startDate, LocalDate endDate) {
-		String sql = String.format("Select * FROM employee_data WHERE start BETWEEN '%s' AND '%s';",
+		String sql = String.format("Select * FROM employee_data WHERE status = 'active' AND start BETWEEN '%s' AND '%s';",
 				Date.valueOf(startDate), Date.valueOf(endDate));
 		List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
 		try {
@@ -151,7 +151,7 @@ public class EmployeePayrollDBService {
 	public double getEmpDataGroupedByGender(String column, String operation, String gender) {
 
 		Map<String, Double> sumByGenderMap = new HashMap<>();
-		String sql = String.format("SELECT gender, %s(%s) FROM employee_data GROUP BY gender;", operation, column);
+		String sql = String.format("SELECT gender, %s(%s) FROM employee_data WHERE status = 'active' GROUP BY gender;", operation, column);
 		try (Connection connection = getConnection()) {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -221,7 +221,8 @@ public class EmployeePayrollDBService {
 		}
 
 		try (Statement statement = connection.createStatement()) {
-			String sql = String.format("INSERT INTO employee_department (emp_id,dept_name) VALUES ('%s','%s');", id, deptList);
+			String sql = String.format("INSERT INTO employee_department (emp_id,dept_name) VALUES ('%s','%s');", id,
+					deptList);
 			int rowAffected = statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
 			if (rowAffected == 1) {
 				ResultSet resultSet = statement.getGeneratedKeys();
@@ -270,6 +271,16 @@ public class EmployeePayrollDBService {
 				}
 		}
 		return employeePayrollData;
+	}
+
+	public void remove(String name) throws EmployeePayrollException {
+		String sql = String.format("UPDATE employee_data SET status = 'inactive' WHERE name = '%s';", name);
+		try (Connection connection = getConnection()) {
+			Statement statement = connection.createStatement();
+			statement.execute(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
