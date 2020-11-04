@@ -188,7 +188,8 @@ public class EmployeePayrollDBService {
 		return employeePayrollData;
 	}
 
-	public EmployeePayrollData addEmpToPayroll(String name, double salary, LocalDate start, String gender) {
+	public EmployeePayrollData addEmpToPayroll(String name, double salary, LocalDate start, String gender,
+			List<String> deptList) {
 		int id = -1;
 		Connection connection = null;
 		EmployeePayrollData employeePayrollData = null;
@@ -218,6 +219,23 @@ public class EmployeePayrollDBService {
 			}
 
 		}
+
+		try (Statement statement = connection.createStatement()) {
+			String sql = String.format("INSERT INTO employee_department (emp_id,dept_name) VALUES ('%s','%s');", id, deptList);
+			int rowAffected = statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+			if (rowAffected == 1) {
+				ResultSet resultSet = statement.getGeneratedKeys();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			try {
+				connection.rollback();
+				return employeePayrollData;
+			} catch (SQLException e1) {
+				e.printStackTrace();
+			}
+		}
+
 		try (Statement statement = connection.createStatement()) {
 			double deductions = salary * 0.2;
 			double taxablePay = salary - deductions;

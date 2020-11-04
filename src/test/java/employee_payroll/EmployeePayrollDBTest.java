@@ -1,6 +1,7 @@
 package employee_payroll;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
@@ -54,9 +55,11 @@ public class EmployeePayrollDBTest {
 	
 	@Test
 	public void givenNewEmployee_WhenAdded_shouldSyncWithDatabase() throws EmployeePayrollException {
+		List<String> deptList = new ArrayList<>();
+		deptList.add("Sales");
 		EmployeePayrollService empPayRollService = new EmployeePayrollService();
 		List<EmployeePayrollData> empPayrollList = empPayRollService.readEmpPayrollData(IOService.DB_IO);
-		empPayRollService.addEmployeeToPayroll("Mark",5000000.00,LocalDate.now(),"M");
+		empPayRollService.addEmployeeToPayroll("Mark",5000000.00,LocalDate.now(),"M", deptList);
 		boolean result = empPayRollService.checkEmployeePayrollInSyncWithDB("Mark");
 		Assert.assertTrue(result);
 	}

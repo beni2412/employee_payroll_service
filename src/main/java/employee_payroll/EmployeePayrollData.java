@@ -97,6 +97,6 @@ public class EmployeePayrollData {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		EmployeePayrollData that = (EmployeePayrollData) o;
-		return id == that.id && Double.compare(that.salary, salary) == 0 && name.equals(that.name)&& this.gender.contentEquals(that.gender) && this.deptList.equals(that.deptList);
+		return id == that.id && Double.compare(that.salary, salary) == 0 && name.equals(that.name)&& this.gender.contentEquals(that.gender);
 	}
 }

@@ -119,8 +119,8 @@ public boolean checkEmployeePayrollInSyncWithDB(String name) {
 		return 0.0;
 	}
 
-	public void addEmployeeToPayroll(String name, double salary, LocalDate start, String gender) {
-		employeePayrollList.add(employeePayrollDBService.addEmpToPayroll(name, salary, start, gender));
+	public void addEmployeeToPayroll(String name, double salary, LocalDate start, String gender, List<String> deptList) {
+		employeePayrollList.add(employeePayrollDBService.addEmpToPayroll(name, salary, start, gender, deptList));
 		
 	}
 
