@@ -1,6 +1,7 @@
 package employee_payroll;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class EmployeePayrollData {
 	private int id;
@@ -8,6 +9,7 @@ public class EmployeePayrollData {
 	public double salary;
 	private LocalDate startDate;
 	private String gender;
+	private List<String> deptList;
 
 	public EmployeePayrollData(int id, String name, double salary) {
 		super();
@@ -23,10 +25,24 @@ public class EmployeePayrollData {
 		this.salary = salary;
 		this.startDate = startDate;
 	}
-	
+
 	public EmployeePayrollData(int id, String name, double salary, LocalDate startDate, String gender) {
-		this(id,name,salary,startDate);
+		this(id, name, salary, startDate);
 		this.gender = gender;
+	}
+
+	public EmployeePayrollData(Integer id, String name, Double salary, LocalDate startDate, String gender,
+			List<String> deptList) {
+		this(id, name, salary, startDate, gender);
+		this.setDeptList(deptList);
+	}
+
+	public List<String> getDeptList() {
+		return deptList;
+	}
+
+	public void setDeptList(List<String> deptList) {
+		this.deptList = deptList;
 	}
 
 	public int getId() {
@@ -60,11 +76,10 @@ public class EmployeePayrollData {
 	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
-	
+
 	public String getGender() {
 		return gender;
 	}
-
 
 	public void setGender(String gender) {
 		this.gender = gender;
@@ -82,6 +97,6 @@ public class EmployeePayrollData {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		EmployeePayrollData that = (EmployeePayrollData) o;
-		return id == that.id && Double.compare(that.salary, salary) == 0 && name.equals(that.name);
+		return id == that.id && Double.compare(that.salary, salary) == 0 && name.equals(that.name)&& this.gender.contentEquals(that.gender) && this.deptList.equals(that.deptList);
 	}
 }
