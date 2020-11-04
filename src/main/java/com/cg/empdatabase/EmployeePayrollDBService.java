@@ -20,6 +20,7 @@ import employee_payroll.EmployeePayrollData;
 import java.sql.Driver;
 
 public class EmployeePayrollDBService {
+	private int connectionCounter;
 	private PreparedStatement employeePayrollDataStatement;
 	private static EmployeePayrollDBService employeePayrollDBService;
 
@@ -33,15 +34,18 @@ public class EmployeePayrollDBService {
 		return employeePayrollDBService;
 	}
 
-	private Connection getConnection() throws SQLException {
+	private synchronized Connection getConnection() throws SQLException {
+		connectionCounter++;
 		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?allowPublicKeyRetrieval=true&&useSSL=false";
 		String userName = "root";
 		String password = "Harman24@";
 		Connection connection = null;
 
-		System.out.println("Connecting to database:" + jdbcURL);
+		System.out.println("Processing Thread : " + Thread.currentThread().getName()
+				+ " Connecting to database with id : " + connectionCounter);
 		connection = DriverManager.getConnection(jdbcURL, userName, password);
-		System.out.println("Connection is succesful!!!" + connection);
+		System.out.println("Processing Thread : " + Thread.currentThread().getName() + "Id : " + connectionCounter
+				+ " Connection successful");
 
 		return connection;
 	}
@@ -114,7 +118,8 @@ public class EmployeePayrollDBService {
 	}
 
 	private int updateEmployeeDataUsingStatement(String name, double salary) {
-		String sql = String.format("update employee_data set salary = %.2f where name = '%s' AND status = 'active';", salary, name);
+		String sql = String.format("update employee_data set salary = %.2f where name = '%s' AND status = 'active';",
+				salary, name);
 		try (Connection connection = this.getConnection()) {
 			Statement statement = connection.createStatement();
 			return statement.executeUpdate(sql);
@@ -125,7 +130,8 @@ public class EmployeePayrollDBService {
 	}
 
 	public List<EmployeePayrollData> getEmployeePayrollDataForDateRange(LocalDate startDate, LocalDate endDate) {
-		String sql = String.format("Select * FROM employee_data WHERE status = 'active' AND start BETWEEN '%s' AND '%s';",
+		String sql = String.format(
+				"Select * FROM employee_data WHERE status = 'active' AND start BETWEEN '%s' AND '%s';",
 				Date.valueOf(startDate), Date.valueOf(endDate));
 		List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
 		try {
@@ -151,7 +157,8 @@ public class EmployeePayrollDBService {
 	public double getEmpDataGroupedByGender(String column, String operation, String gender) {
 
 		Map<String, Double> sumByGenderMap = new HashMap<>();
-		String sql = String.format("SELECT gender, %s(%s) FROM employee_data WHERE status = 'active' GROUP BY gender;", operation, column);
+		String sql = String.format("SELECT gender, %s(%s) FROM employee_data WHERE status = 'active' GROUP BY gender;",
+				operation, column);
 		try (Connection connection = getConnection()) {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -202,8 +209,8 @@ public class EmployeePayrollDBService {
 
 		try (Statement statement = connection.createStatement()) {
 			String sql = String.format(
-					"INSERT INTO employee_data(name, salary, start, gender, status) VALUES('%s', '%s', '%s', '%s','active');", name,
-					salary, Date.valueOf(start), gender);
+					"INSERT INTO employee_data(name, salary, start, gender, status) VALUES('%s', '%s', '%s', '%s','active');",
+					name, salary, Date.valueOf(start), gender);
 			int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
 			if (rowAffected == 1) {
 				ResultSet resultSet = statement.getGeneratedKeys();
