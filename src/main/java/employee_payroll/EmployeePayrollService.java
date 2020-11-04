@@ -2,7 +2,9 @@ package employee_payroll;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import com.cg.empdatabase.EmployeePayrollDBService;
@@ -60,7 +62,10 @@ public class EmployeePayrollService {
 	}
 
 	public void printData(IOService ioService) {
-		new EmployeePayrollFileIOOperations().printEmployeePayrollData();
+		if(ioService.equals(IOService.FILE_IO))
+			new EmployeePayrollFileIOOperations().printEmployeePayrollData();
+		else System.out.println(employeePayrollList);
+
 	}
 
 	public List<EmployeePayrollData> readData(IOService ioService) {
@@ -124,6 +129,7 @@ public class EmployeePayrollService {
 		empPayrollList.forEach(empPayrollData -> {
 		this.addEmployeeToPayroll(empPayrollData.getName(), empPayrollData.getSalary(),
 					empPayrollData.getStartDate(), empPayrollData.getGender(), empPayrollData.getDeptList());
+		System.out.println("Emp Added:" + empPayrollData.getName());
 		});
 		//System.out.println(this.employeePayrollList);
 	}
@@ -132,4 +138,27 @@ public class EmployeePayrollService {
 		employeePayrollDBService.remove(name);
 	}
 
+	public void addEmpToPayrollWithThreads(List<EmployeePayrollData> employeePayrollDataList) throws EmployeePayrollException {
+		Map<Integer, Boolean> employeeAdditionStatus = new HashMap<Integer, Boolean>();
+	    employeePayrollDataList.forEach(employeePayrollData -> {
+	    	employeeAdditionStatus.put(employeePayrollData.hashCode(), false);
+	    	Runnable task = () -> {
+	    	  System.out.println("Employee Being Added : "+ Thread.currentThread().getName());
+	    	  this.addEmployeeToPayroll(employeePayrollData.getName(), employeePayrollData.getSalary(), employeePayrollData.getStartDate(),
+					  employeePayrollData.getGender(), employeePayrollData.getDeptList());
+			   employeeAdditionStatus.put(employeePayrollData.hashCode(), true);
+	    	  System.out.println("Employee Added : "+ Thread.currentThread().getName());
+	    };
+	    Thread thread = new Thread(task, employeePayrollData.getName());
+	    thread.start();
+	      });
+	    while(employeeAdditionStatus.containsValue(false)) {
+	    	try{Thread.sleep(10);
+	    	}catch(InterruptedException e) {
+	    		e.printStackTrace();
+	    	}
+	    }
+	    System.out.println(this.employeePayrollList);
+	    }
 }
+
