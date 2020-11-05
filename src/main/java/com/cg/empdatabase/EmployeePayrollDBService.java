@@ -196,9 +196,11 @@ public class EmployeePayrollDBService {
 	}
 
 	public EmployeePayrollData addEmpToPayroll(String name, double salary, LocalDate start, String gender,
-			List<String> deptList) {
-		int id = -1;
-		Connection connection = null;
+			List<String> deptList) throws SQLException {
+		Map<Integer, Boolean> statusMap = new HashMap<Integer, Boolean>();
+		int id;
+		Connection connection = this.getConnection();
+		connection.setAutoCommit(false);
 		EmployeePayrollData employeePayrollData = null;
 		try {
 			connection = this.getConnection();

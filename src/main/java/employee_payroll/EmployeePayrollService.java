@@ -1,5 +1,6 @@
 package employee_payroll;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,7 +122,12 @@ public class EmployeePayrollService {
 
 	public void addEmployeeToPayroll(String name, double salary, LocalDate start, String gender,
 			List<String> deptList) {
-		employeePayrollList.add(employeePayrollDBService.addEmpToPayroll(name, salary, start, gender, deptList));
+		try {
+			employeePayrollList.add(employeePayrollDBService.addEmpToPayroll(name, salary, start, gender, deptList));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 

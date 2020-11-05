@@ -88,14 +88,10 @@ public class EmployeePayrollDBTest {
 		};
 		EmployeePayrollService empPayRollService = new EmployeePayrollService();
 		empPayRollService.readEmpPayrollData(IOService.DB_IO);
-		Instant start = Instant.now();
-		empPayRollService.addEmployeeToPayroll(Arrays.asList(arrOfEmps));
-		Instant end = Instant.now();
-		System.out.println("Duration without Thread : "+ Duration.between(start, end));
 		Instant threadStart = Instant.now();
 		empPayRollService.addEmpToPayrollWithThreads(Arrays.asList(arrOfEmps));
 		Instant threadEnd = Instant.now();
 		System.out.println("Duration with Thread : "+ Duration.between(threadStart, threadEnd));
-		Assert.assertEquals(7, empPayRollService.countEntries(IOService.DB_IO));
+		Assert.assertEquals(4, empPayRollService.countEntries(IOService.DB_IO));
 	}
 }
